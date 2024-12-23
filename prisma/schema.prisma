@@ -1,0 +1,142 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  EMPLOYEE
+  MEMBER
+}
+
+enum LedgerType {
+  CUSTOMER
+  WHOLESALER
+}
+
+enum ShiftType {
+  MORNING
+  NOON
+  EVENING
+}
+
+enum StockType {
+  IN
+  OUT
+}
+
+model User {
+  id          String    @id @default(cuid())
+  name        String
+  surname     String
+  email       String?
+  password    String?
+  phoneNumber String?
+  role        UserRole  @default(MEMBER)
+  employee    Employee?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  Stock       Stock[]
+}
+
+model Ledger {
+  id          String        @id @default(cuid())
+  name        String
+  type        LedgerType    @default(CUSTOMER)
+  phone       String?
+  address     String?
+  balance     Float         @default(0)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  stock       Stock[]
+  transaction Transaction[]
+}
+
+model Product {
+  id             String   @id @default(cuid())
+  name           String
+  price          Float
+  quantityPerBox Int
+  createdAt      DateTime @default(now()) @map("created_at")
+  stocks         Stock[]
+}
+
+model Stock {
+  id           String     @id @default(cuid())
+  barcode      String?
+  totalBox     Int
+  shift        ShiftType?
+  stockType    StockType
+  specialPrice Float?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  employeeId   String?
+  employee     Employee?  @relation(fields: [employeeId], references: [id])
+  userId       String?
+  user         User?      @relation(fields: [userId], references: [id])
+  productId    String?
+  product      Product?   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  ledgerId     String?
+  ledger       Ledger?    @relation(fields: [ledgerId], references: [id])
+}
+
+enum TransactionType {
+  ADD_DEBT
+  RECEIVE_PAYMENT
+  CC_RECEIVE_PAYMENT
+}
+
+model Transaction {
+  id              Int             @id @default(autoincrement())
+  createdAt       DateTime        @default(now()) @map("created_at")
+  transactionType TransactionType
+  description     String
+  paymentAmount   Float           @default(0)
+  balance         Float           @default(0)
+  ledgerId        String
+  ledger          Ledger          @relation(fields: [ledgerId], references: [id])
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  note      String?
+  title     String?
+  createdAt DateTime @default(now()) @map("created_at")
+}
+
+model Employee {
+  id          String    @id @default(cuid())
+  userId      String    @unique
+  hourlyRate  Float
+  dailyHours  Float?
+  totalHours  Int       @default(0)
+  totalSalary Float     @default(0)
+  logs        WorkLog[]
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stocks      Stock[]
+}
+
+model WorkLog {
+  id         String   @id @default(cuid())
+  employeeId String
+  hours      Int
+  date       DateTime @default(now()) @map("work_date")
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+}
+
+model MonthlyReport {
+  id          String   @id @default(cuid())
+  month       Int
+  year        Int
+  totalHours  Int
+  totalSalary Float
+  createdAt   DateTime @default(now()) @map("created_at")
+}
