@@ -17,7 +17,7 @@ export const login = async (req: Request, res: Response) => {
         sameSite: "strict",
       })
       .cookie("accessToken", accessToken, {
-        secure: process.env.NODE_ENV === "production",
+        secure: false,
         sameSite: "strict",
       })
       .status(200)
@@ -71,7 +71,7 @@ export const refreshToken = async (req: Request, res: Response) => {
     });
 
     res.cookie("accessToken", accessToken, {
-      secure: process.env.NODE_ENV === "production",
+      secure: false,
       sameSite: "strict",
       path: "/",
     });
@@ -89,7 +89,7 @@ export const refreshToken = async (req: Request, res: Response) => {
 
 export const logout = async (req: Request, res: Response) => {
   res.clearCookie("accessToken", {
-    secure: process.env.NODE_ENV === "production",
+    secure: false,
     sameSite: "strict",
   });
   res.clearCookie("refreshToken", {
