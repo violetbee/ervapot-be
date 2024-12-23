@@ -10,7 +10,7 @@ import { logger } from "./middlewares/logger";
 const app: Express = express();
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: process.env.FRONTEND_URL,
   credentials: true,
   optionSuccessStatus: 200,
 };
@@ -22,8 +22,6 @@ app.use(logger);
 dotenv.config();
 app.use(cookieParser());
 
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+app.listen(PORT);
 
 routeHandler(app);
