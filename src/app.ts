@@ -10,7 +10,7 @@ import { logger } from "./middlewares/logger";
 const app: Express = express();
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URL,
+  origin: [process.env.FRONTEND_URL as string, "http://localhost:3000"],
   credentials: true,
   optionSuccessStatus: 200,
 };
