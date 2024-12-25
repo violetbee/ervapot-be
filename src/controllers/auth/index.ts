@@ -17,8 +17,8 @@ export const login = async (req: Request, res: Response) => {
         sameSite: "none",
       })
       .cookie("accessToken", accessToken, {
-        secure: true,
-        sameSite: "none",
+        secure: false,
+        sameSite: "lax",
       })
       .status(200)
       .json({
@@ -66,13 +66,13 @@ export const refreshToken = async (req: Request, res: Response) => {
     const accessToken = generateToken({ id, email, name, surname });
 
     res.clearCookie("accessToken", {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      secure: false,
+      sameSite: "lax",
     });
 
     res.cookie("accessToken", accessToken, {
-      secure: true,
-      sameSite: "none",
+      secure: false,
+      sameSite: "lax",
       path: "/",
     });
 
@@ -89,8 +89,8 @@ export const refreshToken = async (req: Request, res: Response) => {
 
 export const logout = async (req: Request, res: Response) => {
   res.clearCookie("accessToken", {
-    secure: true,
-    sameSite: "none",
+    secure: false,
+    sameSite: "lax",
   });
   res.clearCookie("refreshToken", {
     httpOnly: true,
