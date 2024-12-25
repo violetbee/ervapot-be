@@ -17,7 +17,7 @@ export const login = async (req: Request, res: Response) => {
         sameSite: "none",
       })
       .cookie("accessToken", accessToken, {
-        secure: false,
+        secure: true,
         sameSite: "none",
       })
       .status(200)
@@ -71,7 +71,7 @@ export const refreshToken = async (req: Request, res: Response) => {
     });
 
     res.cookie("accessToken", accessToken, {
-      secure: false,
+      secure: true,
       sameSite: "none",
       path: "/",
     });
@@ -89,7 +89,7 @@ export const refreshToken = async (req: Request, res: Response) => {
 
 export const logout = async (req: Request, res: Response) => {
   res.clearCookie("accessToken", {
-    secure: false,
+    secure: true,
     sameSite: "none",
   });
   res.clearCookie("refreshToken", {
