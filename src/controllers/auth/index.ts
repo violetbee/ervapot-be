@@ -14,9 +14,11 @@ export const login = async (req: Request, res: Response) => {
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        sameSite: "none",
       })
       .cookie("accessToken", accessToken, {
         secure: false,
+        sameSite: "none",
       })
       .status(200)
       .json({
@@ -65,10 +67,12 @@ export const refreshToken = async (req: Request, res: Response) => {
 
     res.clearCookie("accessToken", {
       secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
     });
 
     res.cookie("accessToken", accessToken, {
       secure: false,
+      sameSite: "none",
       path: "/",
     });
 
@@ -86,10 +90,12 @@ export const refreshToken = async (req: Request, res: Response) => {
 export const logout = async (req: Request, res: Response) => {
   res.clearCookie("accessToken", {
     secure: false,
+    sameSite: "none",
   });
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
   });
   res.status(200).json({ message: "Çıkış işlem başarılı!" });
 };
