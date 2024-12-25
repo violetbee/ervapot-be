@@ -14,11 +14,9 @@ export const login = async (req: Request, res: Response) => {
       .cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
       })
       .cookie("accessToken", accessToken, {
         secure: false,
-        sameSite: "strict",
       })
       .status(200)
       .json({
@@ -67,12 +65,10 @@ export const refreshToken = async (req: Request, res: Response) => {
 
     res.clearCookie("accessToken", {
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
     });
 
     res.cookie("accessToken", accessToken, {
       secure: false,
-      sameSite: "strict",
       path: "/",
     });
 
@@ -90,12 +86,10 @@ export const refreshToken = async (req: Request, res: Response) => {
 export const logout = async (req: Request, res: Response) => {
   res.clearCookie("accessToken", {
     secure: false,
-    sameSite: "strict",
   });
   res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
   });
   res.status(200).json({ message: "Çıkış işlem başarılı!" });
 };
