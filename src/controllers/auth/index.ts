@@ -92,16 +92,17 @@ export const refreshToken = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
-  res.clearCookie("accessToken", {
-    secure: process.env.NODE_ENV === "production",
-    sameSite: false,
-    maxAge: 1000 * 60 * 60 * 24 * 30,
-  });
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "none",
-    maxAge: 1000 * 60 * 60 * 24 * 30,
-  });
+  res
+    .clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+    })
+    .clearCookie("accessToken", {
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      maxAge: 1000 * 60 * 60 * 24 * 30,
+    });
   res.status(200).json({ message: "Çıkış işlem başarılı!" });
 };
