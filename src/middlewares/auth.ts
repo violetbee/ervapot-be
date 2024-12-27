@@ -11,12 +11,12 @@ export const AuthMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  if (!req.cookies["accessToken"]) {
+  if (!req.headers["authorization"]) {
     return res.status(401).json({ error: "Yetkisiz erişim." });
   }
-  const token = req.cookies["accessToken"];
+  const token = req.headers["authorization"]?.split(" ")[1];
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    const decoded = jwt.verify(token as string, process.env.JWT_SECRET!);
     req.user = decoded as JwtUser;
     next();
   } catch (error) {
