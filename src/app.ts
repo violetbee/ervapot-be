@@ -25,3 +25,5 @@ app.use(cookieParser());
 app.listen(PORT);
 
 routeHandler(app);
+
+export default app;
