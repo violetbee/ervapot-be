@@ -10,31 +10,19 @@ export const login = async (req: Request, res: Response) => {
 
     const { accessToken, refreshToken } = auth;
 
-    res
-      .cookie("refreshToken", refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-      })
-      .cookie("accessToken", accessToken, {
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "none",
-        maxAge: 1000 * 60 * 60 * 24 * 30,
-      })
-      .status(200)
-      .json({
-        message: "Giriş işlemi başarılı!",
-        user: {
-          id: auth.user.id,
-          email: auth.user.email,
-          name: auth.user.name,
-          surname: auth.user.surname,
-          accessToken,
-          createdAt: Date.now(),
-          expireDate: Date.now() + 1000 * 60 * 30,
-        },
-      });
+    res.status(200).json({
+      message: "Giriş işlemi başarılı!",
+      user: {
+        id: auth.user.id,
+        email: auth.user.email,
+        name: auth.user.name,
+        surname: auth.user.surname,
+      },
+      tokens: {
+        accessToken,
+        refreshToken,
+      },
+    });
   } catch (error: any) {
     return res.status(500).json({
       error: error.message,
@@ -67,19 +55,6 @@ export const refreshToken = async (req: Request, res: Response) => {
     const { id, email, name, surname } = verifyToken(refreshToken);
     const accessToken = generateToken({ id, email, name, surname });
 
-    res.clearCookie("accessToken", {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-    });
-
-    res.cookie("accessToken", accessToken, {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      path: "/",
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-    });
-
     return res.status(200).json({
       accessToken,
       createdAt: Date.now(),
@@ -92,17 +67,5 @@ export const refreshToken = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
-  res
-    .clearCookie("refreshToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-    })
-    .clearCookie("accessToken", {
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      maxAge: 1000 * 60 * 60 * 24 * 30,
-    });
   res.status(200).json({ message: "Çıkış işlem başarılı!" });
 };
